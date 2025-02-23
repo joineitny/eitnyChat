@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Messenger</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>P2P Messenger</h1>
+        <p>Ваш адрес: <strong>{{ .address }}</strong></p>
+        <form id="messageForm">
+            <textarea id="message" placeholder="Введите сообщение"></textarea>
+            <button type="submit">Отправить</button>
+        </form>
+        <div id="response"></div>
+    </div>
+    <script>
+        document.getElementById('messageForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('message').value;
+            const response = await fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `message=${encodeURIComponent(message)}`,
+            });
+            const data = await response.json();
+            document.getElementById('response').innerHTML = `
+                <p>Зашифрованное сообщение: ${data.encrypted}</p>
+                <p>Расшифрованное сообщение: ${data.decrypted}</p>
+            `;
+        };
+    </script>
+</body>
+</html>
